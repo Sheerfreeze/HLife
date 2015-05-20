@@ -3,6 +3,7 @@ import System.IO
 import Data.Char
 import System.Random
 import Control.Monad
+import System.Environment
 import Control.Concurrent
 import Control.Applicative
 import qualified Data.Map as M
@@ -13,7 +14,7 @@ type Cell  = Char --Either '#' for live or '-' for dead
 type Grid  = M.Map CoOrd Cell
 
 --Global varibles
-gS = (50, 50) -- (rows, columns)
+gS = (30, 30) -- (rows, columns)
 rules = ([2,3],[3]) --(Survival,Birth): Conway's Game of Life
 onChar  = '#'
 offChar = '-'
@@ -69,9 +70,11 @@ printCells g  = putStrLn (take (snd gS) g) >> printCells (drop (snd gS) g)
 --Set alternitive rules (use -r tag)
 main :: IO()
 main = do
+    args <- getArgs
     g <- getStdGen
-    let grid = cellsToGrid . map (\x -> if x then onChar else offChar) $ randomRs (True,False) g
-    simulate grid
+    if (args == [])
+        then simulate $ cellsToGrid . map (\x -> if x then onChar else offChar) $ randomRs (True,False) g
+        else readFile (head args) >>= simulate . cellsToGrid . filter isPrint
         where simulate g = do
                         printCells . gridToCells $ g
                         --threadDelay 100000

@@ -38,9 +38,13 @@ cellsToGrid = M.fromList . zip coords . filter isPrint
 surCells :: CoOrd -> Grid -> [Cell]
 surCells co g = map (g M.!) (surCo (fst co) (snd co))
     where inR (r,c) = r `elem` [1..(fst gS)] && c `elem` [1..(snd gS)]
+          rw x = if (x<1) then x+(fst gS) else if (x>(fst gS)) then x-(fst gS) else x
+          cw x = if (x<1) then x+(snd gS) else if (x>(snd gS)) then x-(snd gS) else x
           surCo r c = filter inR
-                      [(r+0, c+1), (r+1, c+1), (r+1, c+0), (r+1, c-1)
-                      ,(r+0, c-1), (r-1, c-1), (r-1, c+0), (r-1, c+1)]
+                      [(rw (r+0), cw (c+1)), (rw (r+1), cw (c+1))
+                      ,(rw (r+1), cw (c+0)), (rw (r+1), cw (c-1))
+                      ,(rw (r+0), cw (c-1)), (rw (r-1), cw (c-1))
+                      ,(rw (r-1), cw (c+0)), (rw (r-1), cw (c+1))]
 
 --Updates grid based on a set of rules
 nextGen :: Grid -> Grid

@@ -4,6 +4,7 @@ import Data.Char --For filtering strings
 import System.Random --For generating random staring configurations
 import Control.Monad --For "piping" IO
 import System.Environment --For saving terminal args
+import Control.Concurrent --For slowing down the program
 import Control.Applicative --The fancy <$> and <*> functions
 import qualified Data.Map as M --For storing our grid
 
@@ -72,4 +73,5 @@ main = do
         else readFile (head args) >>= simulate . cellsToGrid . filter isPrint
         where simulate g = do --Prints current grid, updates the grid, then repeats
                         printCells . gridToCells $ g
+                        threadDelay 100000
                         simulate $ nextGen g
